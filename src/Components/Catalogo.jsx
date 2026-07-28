@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../services/apiService';
-import { Search, Filter, ShoppingCart, Info, AlertTriangle } from 'lucide-react';
+import {
+    AlertTriangle,
+    Check,
+    Filter,
+    Info,
+    Search,
+    ShieldCheck,
+    ShoppingCart,
+    Sparkles,
+    Truck
+} from 'lucide-react';
 
 export const Catalogo = ({ user, AddToCart }) => {
     const [productos, setProductos] = useState([]);
@@ -66,18 +76,30 @@ export const Catalogo = ({ user, AddToCart }) => {
 
 
             {/* Banner Principal */}
-            <div className="bg-gradient-to-br from-violet-200 via-purple-100 to-fuchsia-100 rounded-3xl px-7 py-9 sm:p-10 lg:p-12 mb-6 lg:mb-8 min-h-56 flex items-center text-slate-900 border border-violet-200/80 shadow-[0_18px_45px_-25px_rgba(49,65,90,0.45)] relative overflow-hidden">
-                <div className="relative z-10 max-w-2xl text-left">
-                    <span className="inline-flex items-center rounded-full bg-white/60 border border-violet-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-violet-700 mb-4">
+            <div className="bg-gradient-to-br from-violet-200 via-purple-100 to-fuchsia-100 rounded-[2rem] px-7 py-9 sm:p-10 lg:px-12 lg:py-11 mb-6 lg:mb-8 min-h-64 flex items-center text-slate-900 border border-violet-200/80 shadow-[0_24px_60px_-32px_rgba(49,65,90,0.48)] relative overflow-hidden isolate">
+                <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.9),transparent_32%)]"></div>
+                <div className="relative z-10 max-w-3xl text-left">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-white/65 border border-violet-200 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-violet-700 mb-5 shadow-sm backdrop-blur-sm">
+                        <Sparkles className="w-3.5 h-3.5" />
                         Todo en un solo lugar
                     </span>
                     <h1 className="m-0 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">Catálogo de Productos</h1>
                     <p className="mt-3 text-slate-600 text-sm sm:text-base lg:text-lg max-w-xl">
                         Explora las mejores ofertas, productos de calidad y envíos garantizados directamente por nuestros proveedores.
                     </p>
+                    <div className="mt-6 flex flex-wrap gap-2.5">
+                        <span className="inline-flex items-center gap-2 rounded-full bg-white/55 border border-white/70 px-3 py-1.5 text-xs font-semibold text-slate-600 backdrop-blur-sm">
+                            <ShieldCheck className="w-4 h-4 text-violet-600" />
+                            Compra segura
+                        </span>
+                        <span className="inline-flex items-center gap-2 rounded-full bg-white/55 border border-white/70 px-3 py-1.5 text-xs font-semibold text-slate-600 backdrop-blur-sm">
+                            <Truck className="w-4 h-4 text-violet-600" />
+                            Envíos garantizados
+                        </span>
+                    </div>
                 </div>
-                <div className="absolute -right-5 sm:right-4 bottom-0 top-0 text-violet-700 opacity-10 flex items-center justify-center p-4 sm:p-8">
-                    <ShoppingCart className="w-56 h-56 sm:w-72 sm:h-72" />
+                <div className="absolute -right-16 sm:right-8 lg:right-16 top-1/2 -translate-y-1/2 w-56 h-56 lg:w-64 lg:h-64 rounded-full bg-white/25 border border-white/40 shadow-inner backdrop-blur-sm flex items-center justify-center">
+                    <ShoppingCart className="w-32 h-32 lg:w-40 lg:h-40 text-violet-700 opacity-15" />
                 </div>
             </div>
 
@@ -95,48 +117,51 @@ export const Catalogo = ({ user, AddToCart }) => {
                 {/* Filtros Lateral (Sidebar) */}
                 <aside className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-4 lg:sticky lg:top-24 lg:self-start">
                     {/* Tarjeta de Búsqueda */}
-                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_8px_25px_-18px_rgba(15,23,42,0.45)] space-y-3 text-left">
+                    <div className="bg-white p-5 rounded-[1.4rem] border border-slate-200/90 shadow-[0_12px_35px_-24px_rgba(15,23,42,0.5)] space-y-3 text-left">
                         <h3 className="font-bold text-gray-800 flex items-center gap-2 text-sm uppercase tracking-wider">
                             <Search className="w-4 h-4 text-violet-500" /> Buscar Producto
                         </h3>
                         <div className="relative">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Escribe nombre o descripción..."
-                                className="w-full p-3 pl-4 rounded-xl border border-gray-300 focus:outline-none text-sm text-gray-900"
+                                className="w-full py-3 pl-10 pr-4 rounded-xl border border-gray-300 focus:outline-none text-sm text-gray-900"
                             />
                         </div>
                     </div>
 
                     {/* Tarjeta de Categorías */}
-                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_8px_25px_-18px_rgba(15,23,42,0.45)] space-y-4 text-left">
+                    <div className="bg-white p-5 rounded-[1.4rem] border border-slate-200/90 shadow-[0_12px_35px_-24px_rgba(15,23,42,0.5)] space-y-4 text-left">
                         <h3 className="font-bold text-gray-800 flex items-center gap-2 text-sm uppercase tracking-wider">
                             <Filter className="w-4 h-4 text-violet-500" /> Categorías
                         </h3>
                         <div className="flex flex-wrap lg:flex-col gap-1.5">
                             <button
                                 onClick={() => setSelecionCategoria('Todos')}
-                                className={`w-auto lg:w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                                className={`w-auto lg:w-full flex items-center justify-between gap-3 text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                                     selecionCategoria === 'Todos'
                                         ? 'bg-violet-50 text-violet-700 font-bold ring-1 ring-violet-100'
                                         : 'text-gray-600 hover:bg-gray-50'
                                 }`}
                             >
-                                Todas las categorías
+                                <span>Todas las categorías</span>
+                                {selecionCategoria === 'Todos' && <Check className="w-4 h-4 hidden lg:block" />}
                             </button>
                             {categorias.map((cat) => (
                                 <button
                                     key={cat.id}
                                     onClick={() => setSelecionCategoria(cat.nombre)}
-                                    className={`w-auto lg:w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                                    className={`w-auto lg:w-full flex items-center justify-between gap-3 text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                                         selecionCategoria === cat.nombre
                                             ? 'bg-violet-50 text-violet-700 font-bold ring-1 ring-violet-100'
                                             : 'text-gray-600 hover:bg-gray-50'
                                     }`}
                                 >
-                                    {cat.nombre}
+                                    <span>{cat.nombre}</span>
+                                    {selecionCategoria === cat.nombre && <Check className="w-4 h-4 hidden lg:block" />}
                                 </button>
                             ))}
                         </div>
@@ -145,10 +170,10 @@ export const Catalogo = ({ user, AddToCart }) => {
 
                 {/* Cuadrícula de Productos */}
                 <section className="w-full min-w-0">
-                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5 text-left">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 text-left">
                         <div>
-                            <h2 className="m-0 text-2xl font-extrabold text-slate-900">Productos</h2>
-                            <p className="text-sm text-slate-500 mt-1">
+                            <h2 className="m-0 text-2xl font-extrabold tracking-tight text-slate-900">Productos</h2>
+                            <p className="text-sm text-slate-500 mt-0.5">
                                 {filtroProductos.length} {filtroProductos.length === 1 ? 'artículo encontrado' : 'artículos encontrados'}
                             </p>
                         </div>
@@ -174,28 +199,29 @@ export const Catalogo = ({ user, AddToCart }) => {
                                 return (
                                     <div
                                         key={producto.id}
-                                        className="bg-white rounded-2xl border border-slate-200 shadow-[0_8px_28px_-20px_rgba(15,23,42,0.6)] overflow-hidden flex flex-col group hover:shadow-[0_18px_38px_-22px_rgba(15,23,42,0.55)] transition-all duration-300 hover:-translate-y-1"
+                                        className="bg-white rounded-[1.4rem] border border-slate-200/90 shadow-[0_12px_35px_-24px_rgba(15,23,42,0.58)] overflow-hidden flex flex-col group hover:shadow-[0_24px_48px_-25px_rgba(15,23,42,0.5)] transition-all duration-300 hover:-translate-y-1.5"
                                     >
                                         {/* Imagen con zoom effect */}
                                         <div className="h-52 2xl:h-56 w-full bg-gray-100 relative overflow-hidden">
                                             <img
                                                 src={producto.imagenUrl || defaultImage}
                                                 alt={producto.nombre}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
                                                 onError={(e) => {
                                                     e.target.src = defaultImage;
                                                 }}
                                             />
+                                            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-900/15 to-transparent pointer-events-none"></div>
                                             {/* Categoría Badge */}
                                             {producto.categoria && (
-                                                <span className="absolute top-3 left-3 bg-violet-700/90 text-white text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm">
+                                                <span className="absolute top-3.5 left-3.5 bg-violet-700/90 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-md shadow-sm border border-white/20">
                                                     {producto.categoria.nombre}
                                                 </span>
                                             )}
                                         </div>
 
                                         {/* Cuerpo */}
-                                        <div className="p-5 flex-grow flex flex-col justify-between gap-5">
+                                        <div className="p-5 flex-grow flex flex-col justify-between gap-5 text-left">
                                             <div className="space-y-2">
                                                 {/* Proveedor */}
                                                 {producto.proveedor && (
@@ -203,7 +229,7 @@ export const Catalogo = ({ user, AddToCart }) => {
                                                         <i className="fa-solid fa-truck text-violet-400"></i> {producto.proveedor.nombreEmpresa}
                                                     </div>
                                                 )}
-                                                <h3 className="font-bold text-gray-800 text-lg leading-snug line-clamp-2 min-h-[2.75rem] group-hover:text-violet-600 transition-colors">
+                                                <h3 className="font-extrabold text-gray-800 text-lg tracking-tight leading-snug line-clamp-2 min-h-[2.75rem] group-hover:text-violet-600 transition-colors">
                                                     {producto.nombre}
                                                 </h3>
                                                 <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 min-h-10">
@@ -214,10 +240,11 @@ export const Catalogo = ({ user, AddToCart }) => {
                                             {/* Precio y Stock */}
                                             <div className="pt-2">
                                                 <div className="flex flex-wrap justify-between items-end gap-2">
-                                                    <span className="font-extrabold text-xl leading-tight text-slate-900">
+                                                    <span className="font-extrabold text-xl tracking-tight leading-tight text-slate-900">
                                                         ${producto.precio.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
                                                     </span>
-                                                    <span className={`text-xs font-bold ${isOutOfStock ? 'text-red-500' : 'text-green-600'}`}>
+                                                    <span className={`inline-flex items-center gap-1.5 text-xs font-bold ${isOutOfStock ? 'text-red-500' : 'text-green-600'}`}>
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${isOutOfStock ? 'bg-red-500' : 'bg-green-500'}`}></span>
                                                         {isOutOfStock ? 'Sin stock' : `Disponibles: ${producto.stock}`}
                                                     </span>
                                                 </div>
@@ -226,10 +253,10 @@ export const Catalogo = ({ user, AddToCart }) => {
                                                 <button
                                                     onClick={() => handleAddToCart(producto)}
                                                     disabled={isOutOfStock || isAdmin}
-                                                    className={`w-full mt-4 flex items-center justify-center gap-2 p-3 rounded-xl font-bold text-xs shadow-sm transition-all duration-200 cursor-pointer ${
+                                                    className={`w-full mt-4 flex items-center justify-center gap-2 p-3 rounded-xl font-bold text-sm shadow-sm transition-all duration-200 cursor-pointer ${
                                                         isOutOfStock || isAdmin
                                                             ? 'bg-gray-100 text-gray-400 shadow-none cursor-not-allowed'
-                                                            : 'bg-violet-600 hover:bg-violet-700 text-white hover:shadow-md'
+                                                            : 'bg-violet-600 hover:bg-violet-700 text-white hover:shadow-lg hover:shadow-violet-200'
                                                     }`}
                                                 >
                                                     <ShoppingCart className="w-4 h-4" />

@@ -13,22 +13,24 @@ export const Navbar = ({vistaActual, setVistaActual, user,
 const isClient = user && user.rol === 'ROLE_CLIENTE';
 const isAdmin = user && user.rol === 'ROLE_ADMIN';
 return (
-    <nav className="sticky top-0 z-50 bg-violet-100/95 text-slate-800 border-b border-violet-200/80 shadow-sm backdrop-blur-md">
+    <nav className="sticky top-0 z-50 bg-violet-100/90 text-slate-800 border-b border-violet-200/80 shadow-sm backdrop-blur-xl">
         <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 xl:px-8 2xl:px-10">
-            <div className="flex items-center justify-between min-h-16 py-2 gap-4">
+            <div className="flex items-center justify-between min-h-[4.5rem] py-2 gap-4">
                 {/* Logo y links */}
-                <div className="flex items-center flex-shrink-0 cursor-pointer" 
+                <div className="flex items-center gap-2.5 flex-shrink-0 cursor-pointer group" 
                 onClick={() => setVistaActual('catalogo')}>
-                    <ShoppingBag className="h-8 w-8 text-violet-600" />
-                    <span className="font-extrabold text-xl tracking-tight text-violet-700">Aliviababa</span>
+                    <span className="w-10 h-10 rounded-xl bg-white/70 border border-violet-200 shadow-sm flex items-center justify-center group-hover:-translate-y-0.5 transition-transform">
+                        <ShoppingBag className="h-6 w-6 text-violet-600" />
+                    </span>
+                    <span className="hidden sm:inline font-extrabold text-xl tracking-tight text-violet-700">Aliviababa</span>
                 </div>
                 {/* Links de navegación */}
                 <div className="nav-actions flex items-center gap-1 sm:gap-2 overflow-x-auto">
                     <button onClick={() => setVistaActual('catalogo')}
-                    className={`hidden sm:block px-3 py-2 rounded-md text-sm font-medium
+                    className={`hidden sm:block px-3.5 py-2.5 rounded-xl text-sm font-medium
                         transition-colors hover:bg-white/70 
                     ${vistaActual === 'catalogo' ? 
-                    'bg-white font-bold text-violet-700 shadow-sm' : ''}`}>
+                    'bg-white font-bold text-violet-700 shadow-sm ring-1 ring-violet-200/60' : ''}`}>
                         Catalogo
                     </button>
 
@@ -80,7 +82,7 @@ return (
                         <div
                             className="flex items-center gap-2 bg-white/75
                             px-3 py-2 rounded-xl border border-violet-200 shadow-sm
-                            w-52"
+                            w-auto sm:w-52"
                         >
                             <div
                                 className="w-8 h-8 rounded-full bg-violet-600
@@ -89,7 +91,7 @@ return (
                                 <User className="w-4 h-4 text-white" />
                             </div>
 
-                            <div className="leading-tight overflow-hidden">
+                            <div className="hidden sm:block leading-tight overflow-hidden">
                                 <p className="text-sm font-semibold text-slate-800 truncate">
                                     {user.nombre}
                                 </p>
