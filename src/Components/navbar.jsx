@@ -14,7 +14,7 @@ const isClient = user && user.rol === 'ROLE_CLIENTE';
 const isAdmin = user && user.rol === 'ROLE_ADMIN';
 return (
     <nav className="sticky top-0 z-50 bg-violet-100/95 text-slate-800 border-b border-violet-200/80 shadow-sm backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 xl:px-8 2xl:px-10">
             <div className="flex items-center justify-between min-h-16 py-2 gap-4">
                 {/* Logo y links */}
                 <div className="flex items-center flex-shrink-0 cursor-pointer" 

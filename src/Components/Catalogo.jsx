@@ -62,19 +62,22 @@ export const Catalogo = ({ user, AddToCart }) => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-9">
+        <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 xl:px-8 2xl:px-10 py-6 sm:py-8">
 
 
             {/* Banner Principal */}
-            <div className="bg-gradient-to-br from-violet-200 via-purple-100 to-fuchsia-100 rounded-3xl p-8 mb-8 text-slate-900 border border-violet-200/80 shadow-[0_18px_45px_-25px_rgba(49,65,90,0.45)] relative overflow-hidden">
-                <div className="relative z-10 max-w-xl">
-                    <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Catálogo de Productos</h1>
-                    <p className="mt-2 text-slate-600 text-sm sm:text-base">
+            <div className="bg-gradient-to-br from-violet-200 via-purple-100 to-fuchsia-100 rounded-3xl px-7 py-9 sm:p-10 lg:p-12 mb-6 lg:mb-8 min-h-56 flex items-center text-slate-900 border border-violet-200/80 shadow-[0_18px_45px_-25px_rgba(49,65,90,0.45)] relative overflow-hidden">
+                <div className="relative z-10 max-w-2xl text-left">
+                    <span className="inline-flex items-center rounded-full bg-white/60 border border-violet-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-violet-700 mb-4">
+                        Todo en un solo lugar
+                    </span>
+                    <h1 className="m-0 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">Catálogo de Productos</h1>
+                    <p className="mt-3 text-slate-600 text-sm sm:text-base lg:text-lg max-w-xl">
                         Explora las mejores ofertas, productos de calidad y envíos garantizados directamente por nuestros proveedores.
                     </p>
                 </div>
-                <div className="absolute right-0 bottom-0 top-0 text-violet-700 opacity-10 flex items-center justify-center p-8">
-                    <ShoppingCart className="w-64 h-64" />
+                <div className="absolute -right-5 sm:right-4 bottom-0 top-0 text-violet-700 opacity-10 flex items-center justify-center p-4 sm:p-8">
+                    <ShoppingCart className="w-56 h-56 sm:w-72 sm:h-72" />
                 </div>
             </div>
 
@@ -88,11 +91,11 @@ export const Catalogo = ({ user, AddToCart }) => {
             )}
 
             {/* Buscador y Contenido */}
-            <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex flex-col lg:flex-row gap-6 xl:gap-8 items-start">
                 {/* Filtros Lateral (Sidebar) */}
-                <div className="w-full md:w-1/4 flex-shrink-0 space-y-6 md:sticky md:top-24 md:self-start">
+                <aside className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-4 lg:sticky lg:top-24 lg:self-start">
                     {/* Tarjeta de Búsqueda */}
-                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_8px_25px_-18px_rgba(15,23,42,0.45)] space-y-3">
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_8px_25px_-18px_rgba(15,23,42,0.45)] space-y-3 text-left">
                         <h3 className="font-bold text-gray-800 flex items-center gap-2 text-sm uppercase tracking-wider">
                             <Search className="w-4 h-4 text-violet-500" /> Buscar Producto
                         </h3>
@@ -108,14 +111,14 @@ export const Catalogo = ({ user, AddToCart }) => {
                     </div>
 
                     {/* Tarjeta de Categorías */}
-                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_8px_25px_-18px_rgba(15,23,42,0.45)] space-y-4">
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-[0_8px_25px_-18px_rgba(15,23,42,0.45)] space-y-4 text-left">
                         <h3 className="font-bold text-gray-800 flex items-center gap-2 text-sm uppercase tracking-wider">
                             <Filter className="w-4 h-4 text-violet-500" /> Categorías
                         </h3>
-                        <div className="flex flex-col gap-1.5">
+                        <div className="flex flex-wrap lg:flex-col gap-1.5">
                             <button
                                 onClick={() => setSelecionCategoria('Todos')}
-                                className={`w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                                className={`w-auto lg:w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                                     selecionCategoria === 'Todos'
                                         ? 'bg-violet-50 text-violet-700 font-bold ring-1 ring-violet-100'
                                         : 'text-gray-600 hover:bg-gray-50'
@@ -127,7 +130,7 @@ export const Catalogo = ({ user, AddToCart }) => {
                                 <button
                                     key={cat.id}
                                     onClick={() => setSelecionCategoria(cat.nombre)}
-                                    className={`w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                                    className={`w-auto lg:w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                                         selecionCategoria === cat.nombre
                                             ? 'bg-violet-50 text-violet-700 font-bold ring-1 ring-violet-100'
                                             : 'text-gray-600 hover:bg-gray-50'
@@ -138,10 +141,23 @@ export const Catalogo = ({ user, AddToCart }) => {
                             ))}
                         </div>
                     </div>
-                </div>
+                </aside>
 
                 {/* Cuadrícula de Productos */}
-                <div className="w-full md:w-3/4">
+                <section className="w-full min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5 text-left">
+                        <div>
+                            <h2 className="m-0 text-2xl font-extrabold text-slate-900">Productos</h2>
+                            <p className="text-sm text-slate-500 mt-1">
+                                {filtroProductos.length} {filtroProductos.length === 1 ? 'artículo encontrado' : 'artículos encontrados'}
+                            </p>
+                        </div>
+                        {selecionCategoria !== 'Todos' && (
+                            <span className="self-start sm:self-auto bg-violet-50 text-violet-700 border border-violet-100 rounded-full px-3.5 py-1.5 text-xs font-bold">
+                                {selecionCategoria}
+                            </span>
+                        )}
+                    </div>
                     {filtroProductos.length === 0 ? (
                         <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center shadow-sm">
                             <AlertTriangle className="w-12 h-12 text-violet-300 mx-auto mb-4" />
@@ -149,7 +165,7 @@ export const Catalogo = ({ user, AddToCart }) => {
                             <p className="text-gray-500 text-sm mt-1">Prueba a modificar los filtros o los términos de búsqueda.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-5 xl:gap-6">
                             {filtroProductos.map((producto) => {
                                 const defaultImage = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=300";
                                 const isOutOfStock = producto.stock <= 0;
@@ -161,7 +177,7 @@ export const Catalogo = ({ user, AddToCart }) => {
                                         className="bg-white rounded-2xl border border-slate-200 shadow-[0_8px_28px_-20px_rgba(15,23,42,0.6)] overflow-hidden flex flex-col group hover:shadow-[0_18px_38px_-22px_rgba(15,23,42,0.55)] transition-all duration-300 hover:-translate-y-1"
                                     >
                                         {/* Imagen con zoom effect */}
-                                        <div className="h-48 w-full bg-gray-100 relative overflow-hidden">
+                                        <div className="h-52 2xl:h-56 w-full bg-gray-100 relative overflow-hidden">
                                             <img
                                                 src={producto.imagenUrl || defaultImage}
                                                 alt={producto.nombre}
@@ -179,7 +195,7 @@ export const Catalogo = ({ user, AddToCart }) => {
                                         </div>
 
                                         {/* Cuerpo */}
-                                        <div className="p-5 flex-grow flex flex-col justify-between space-y-4">
+                                        <div className="p-5 flex-grow flex flex-col justify-between gap-5">
                                             <div className="space-y-2">
                                                 {/* Proveedor */}
                                                 {producto.proveedor && (
@@ -187,18 +203,18 @@ export const Catalogo = ({ user, AddToCart }) => {
                                                         <i className="fa-solid fa-truck text-violet-400"></i> {producto.proveedor.nombreEmpresa}
                                                     </div>
                                                 )}
-                                                <h3 className="font-bold text-gray-800 text-base line-clamp-1 group-hover:text-violet-600 transition-colors">
+                                                <h3 className="font-bold text-gray-800 text-lg leading-snug line-clamp-2 min-h-[2.75rem] group-hover:text-violet-600 transition-colors">
                                                     {producto.nombre}
                                                 </h3>
-                                                <p className="text-gray-500 text-xs line-clamp-2 h-8">
+                                                <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 min-h-10">
                                                     {producto.descripcion || 'Sin descripción disponible.'}
                                                 </p>
                                             </div>
 
                                             {/* Precio y Stock */}
                                             <div className="pt-2">
-                                                <div className="flex justify-between items-baseline">
-                                                    <span className="font-extrabold text-xl text-slate-900">
+                                                <div className="flex flex-wrap justify-between items-end gap-2">
+                                                    <span className="font-extrabold text-xl leading-tight text-slate-900">
                                                         ${producto.precio.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
                                                     </span>
                                                     <span className={`text-xs font-bold ${isOutOfStock ? 'text-red-500' : 'text-green-600'}`}>
@@ -226,7 +242,7 @@ export const Catalogo = ({ user, AddToCart }) => {
                             })}
                         </div>
                     )}
-                </div>
+                </section>
             </div>
 
         </div>
