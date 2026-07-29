@@ -201,6 +201,12 @@ function App() {
           user={user}
           onLogout={handleLogout}
           setVistaActual={setVistaActual}
+          onUserUpdate={(datosActualizados) =>
+            setUser((usuarioActual) => ({
+              ...usuarioActual,
+              ...datosActualizados,
+            }))
+          }
         />
       );
 

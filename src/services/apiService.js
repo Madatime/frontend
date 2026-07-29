@@ -207,6 +207,26 @@ export const apiService = {
         return await handleResponse(response);
     },
 
+    getPerfilCliente: async () => {
+        const response = await fetch(
+            API_URL + "cliente/perfil",
+            { headers: getHeaders() }
+        );
+        return await handleResponse(response);
+    },
+
+    actualizarPerfilCliente: async (cliente) => {
+        const response = await fetch(
+            API_URL + "cliente/perfil",
+            {
+                method: "PUT",
+                body: JSON.stringify(cliente),
+                headers: getHeaders()
+            }
+        );
+        return await handleResponse(response);
+    },
+
     crearCliente: async (cliente) => {
         const response = await fetch(
             API_URL + "cliente/",

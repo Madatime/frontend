@@ -1,7 +1,71 @@
-export const Perfil = ({ onLogout, user, setVistaActual }) => {
-  const nombre = user?.nombre || "Marce Daniel";
+import { useEffect, useState } from "react";
+import { apiService } from "../services/apiService";
+
+const formularioInicial = {
+  nombre: "",
+  email: "",
+  telefono: "",
+  direccion: "",
+};
+
+export const Perfil = ({
+  onLogout,
+  user,
+  setVistaActual,
+  onUserUpdate,
+}) => {
   const username = user?.username || "marcedaniel";
   const rol = user?.rol || "ROLE_CLIENTE";
+  const esCliente = rol === "ROLE_CLIENTE";
+  const [formulario, setFormulario] = useState({
+    ...formularioInicial,
+    nombre: user?.nombre || "",
+  });
+  const [cargando, setCargando] = useState(esCliente);
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState("");
+  const [exito, setExito] = useState("");
+
+  useEffect(() => {
+    if (!esCliente) {
+      return;
+    }
+
+    let activo = true;
+
+    const cargarPerfil = async () => {
+      setCargando(true);
+      setError("");
+      try {
+        const cliente = await apiService.getPerfilCliente();
+        if (activo) {
+          setFormulario({
+            nombre: cliente.nombre || "",
+            email: cliente.email || "",
+            telefono: cliente.telefono || "",
+            direccion: cliente.direccion || "",
+          });
+        }
+      } catch (err) {
+        if (activo) {
+          setError(err.message || "No se pudo cargar la información del cliente.");
+        }
+      } finally {
+        if (activo) {
+          setCargando(false);
+        }
+      }
+    };
+
+    cargarPerfil();
+
+    return () => {
+      activo = false;
+    };
+  }, [esCliente]);
+
+  const nombre =
+    formulario.nombre || user?.nombre || user?.username || "Marce Daniel";
 
   const nombreRol =
     rol === "ROLE_ADMIN"
@@ -14,6 +78,50 @@ export const Perfil = ({ onLogout, user, setVistaActual }) => {
     .slice(0, 2)
     .map((palabra) => palabra.charAt(0).toUpperCase())
     .join("");
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormulario((actual) => ({
+      ...actual,
+      [name]: value,
+    }));
+    setError("");
+    setExito("");
+  };
+
+  const guardarCambios = async (event) => {
+    event.preventDefault();
+    if (!esCliente) {
+      return;
+    }
+
+    setGuardando(true);
+    setError("");
+    setExito("");
+
+    try {
+      const clienteActualizado = await apiService.actualizarPerfilCliente({
+        nombre: formulario.nombre.trim(),
+        email: formulario.email.trim(),
+        telefono: formulario.telefono.trim(),
+        direccion: formulario.direccion.trim(),
+      });
+
+      setFormulario({
+        nombre: clienteActualizado.nombre || "",
+        email: clienteActualizado.email || "",
+        telefono: clienteActualizado.telefono || "",
+        direccion: clienteActualizado.direccion || "",
+      });
+      localStorage.setItem("nombre", clienteActualizado.nombre || username);
+      onUserUpdate?.({ nombre: clienteActualizado.nombre || username });
+      setExito("Información actualizada correctamente.");
+    } catch (err) {
+      setError(err.message || "No se pudieron guardar los cambios.");
+    } finally {
+      setGuardando(false);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-8">
@@ -50,7 +158,10 @@ export const Perfil = ({ onLogout, user, setVistaActual }) => {
 
       <div className="grid lg:grid-cols-3 gap-6 mt-8">
         {/* Información */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-md p-6">
+        <form
+          onSubmit={guardarCambios}
+          className="lg:col-span-2 bg-white rounded-2xl shadow-md p-6"
+        >
           <h2 className="text-2xl font-bold mb-6">
             Información personal
           </h2>
@@ -63,9 +174,13 @@ export const Perfil = ({ onLogout, user, setVistaActual }) => {
 
               <input
                 type="text"
+                name="nombre"
                 className="w-full border rounded-xl p-3 bg-gray-50"
-                value={nombre}
-                readOnly
+                value={formulario.nombre}
+                onChange={handleChange}
+                readOnly={!esCliente}
+                disabled={cargando || guardando}
+                required
               />
             </div>
 
@@ -89,9 +204,13 @@ export const Perfil = ({ onLogout, user, setVistaActual }) => {
 
               <input
                 type="email"
+                name="email"
                 className="w-full border rounded-xl p-3 bg-gray-50"
-                value={user?.email || "correo@gmail.com"}
-                readOnly
+                value={formulario.email}
+                onChange={handleChange}
+                readOnly={!esCliente}
+                disabled={cargando || guardando}
+                required
               />
             </div>
 
@@ -102,9 +221,12 @@ export const Perfil = ({ onLogout, user, setVistaActual }) => {
 
               <input
                 type="text"
+                name="telefono"
                 className="w-full border rounded-xl p-3 bg-gray-50"
-                value={user?.telefono || "7470000000"}
-                readOnly
+                value={formulario.telefono}
+                onChange={handleChange}
+                readOnly={!esCliente}
+                disabled={cargando || guardando}
               />
             </div>
 
@@ -115,25 +237,40 @@ export const Perfil = ({ onLogout, user, setVistaActual }) => {
 
               <input
                 type="text"
+                name="direccion"
                 className="w-full border rounded-xl p-3 bg-gray-50"
-                value={
-                  user?.direccion ||
-                  "Chilpancingo, Guerrero"
-                }
-                readOnly
+                value={formulario.direccion}
+                onChange={handleChange}
+                readOnly={!esCliente}
+                disabled={cargando || guardando}
               />
             </div>
           </div>
 
-          <div className="flex justify-end mt-8">
-            <button
-              type="button"
-              className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-xl font-semibold"
-            >
-              Guardar cambios
-            </button>
-          </div>
-        </div>
+          {error && (
+            <p className="mt-5 text-sm font-medium text-red-600">
+              {error}
+            </p>
+          )}
+
+          {exito && (
+            <p className="mt-5 text-sm font-medium text-green-600">
+              {exito}
+            </p>
+          )}
+
+          {esCliente && (
+            <div className="flex justify-end mt-8">
+              <button
+                type="submit"
+                disabled={cargando || guardando}
+                className="bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white px-6 py-3 rounded-xl font-semibold"
+              >
+                {guardando ? "Guardando..." : "Guardar cambios"}
+              </button>
+            </div>
+          )}
+        </form>
 
         {/* Panel lateral */}
         <div className="space-y-6">
