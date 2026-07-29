@@ -40,12 +40,81 @@ export const Catalogo = ({ user, AddToCart }) => {
     }, []);
 
     //AGREGAR AL CARRITO
-    const handleAddToCart = (producto) => {
+    const animateProductToCart = (event) => {
+        const cartTarget = document.querySelector('[aria-label^="Abrir carrito"]');
+        const productImage = event.currentTarget.closest('.group')?.querySelector('img');
+
+        if (
+            !cartTarget ||
+            !productImage ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ) {
+            return;
+        }
+
+        const imageRect = productImage.getBoundingClientRect();
+        const cartRect = cartTarget.getBoundingClientRect();
+        const flyingImage = productImage.cloneNode();
+        const translateX =
+            cartRect.left + cartRect.width / 2 - (imageRect.left + imageRect.width / 2);
+        const translateY =
+            cartRect.top + cartRect.height / 2 - (imageRect.top + imageRect.height / 2);
+
+        Object.assign(flyingImage.style, {
+            position: 'fixed',
+            left: `${imageRect.left}px`,
+            top: `${imageRect.top}px`,
+            width: `${imageRect.width}px`,
+            height: `${imageRect.height}px`,
+            objectFit: 'cover',
+            borderRadius: '1.25rem',
+            pointerEvents: 'none',
+            zIndex: '9999',
+            boxShadow: '0 18px 35px rgba(76, 29, 149, 0.28)'
+        });
+
+        document.body.appendChild(flyingImage);
+
+        const animation = flyingImage.animate(
+            [
+                { transform: 'translate(0, 0) scale(1)', opacity: 0.95 },
+                {
+                    transform: `translate(${translateX * 0.55}px, ${translateY * 0.35 - 70}px) scale(0.55)`,
+                    opacity: 0.85,
+                    offset: 0.65
+                },
+                {
+                    transform: `translate(${translateX}px, ${translateY}px) scale(0.12)`,
+                    opacity: 0.2
+                }
+            ],
+            {
+                duration: 650,
+                easing: 'cubic-bezier(0.22, 0.8, 0.25, 1)'
+            }
+        );
+
+        animation.onfinish = () => {
+            flyingImage.remove();
+            cartTarget.animate(
+                [
+                    { transform: 'scale(1)' },
+                    { transform: 'scale(1.2)' },
+                    { transform: 'scale(1)' }
+                ],
+                { duration: 260, easing: 'ease-out' }
+            );
+        };
+        animation.oncancel = () => flyingImage.remove();
+    };
+
+    const handleAddToCart = (producto, event) => {
         if (user?.rol === 'ROLE_ADMIN') {
             alert('Los administradores no pueden agregar productos al carrito.');
             return;
         }
         AddToCart(producto);
+        animateProductToCart(event);
     };
 
     const filtroProductos = productos.filter((producto) => {
@@ -251,7 +320,7 @@ export const Catalogo = ({ user, AddToCart }) => {
 
                                                 {/* Botón Comprar */}
                                                 <button
-                                                    onClick={() => handleAddToCart(producto)}
+                                                    onClick={(event) => handleAddToCart(producto, event)}
                                                     disabled={isOutOfStock || isAdmin}
                                                     className={`w-full mt-4 flex items-center justify-center gap-2 p-3 rounded-xl font-bold text-sm shadow-sm transition-all duration-200 cursor-pointer ${
                                                         isOutOfStock || isAdmin
