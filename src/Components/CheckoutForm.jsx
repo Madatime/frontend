@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { apiService } from '../services/apiService';
-import { CreditCard, CheckCircle2, ShieldAlert, Loader2 } from 'lucide-react';
+import { CreditCard, CheckCircle2, ShieldAlert, Loader2, Play } from 'lucide-react';
 
 const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null;
@@ -14,6 +14,7 @@ const PaymentForm = ({ venta, onPaymentSuccess }) => {
   const [clientSecret, setClientSecret] = useState('');
   const [procesando, setProcesando] = useState(false);
   const [error, setError] = useState('');
+  const [simulating, setSimulating] = useState(false);
 
   useEffect(() => {
     // 1. Obtener el clientSecret del backend
@@ -64,8 +65,22 @@ const PaymentForm = ({ venta, onPaymentSuccess }) => {
     }
   };
 
+  // Simulador de pago para pruebas
+  const handleSimulatePayment = async () => {
+    setSimulating(true);
+    setError('');
+    try {
+      await apiService.confirmarPagoVenta(venta.id);
+      onPaymentSuccess();
+    } catch {
+      setError('Error al conectar con la API para simular el pago.');
+    } finally {
+      setSimulating(false);
+    }
+  };
+
   return (
-    <div>
+    <div className="space-y-6">
       {error && (
         <div className="bg-red-50 text-red-700 p-4 rounded-xl flex items-start gap-2.5 border border-red-200 text-sm">
           <ShieldAlert className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
@@ -104,6 +119,44 @@ const PaymentForm = ({ venta, onPaymentSuccess }) => {
           )}
         </button>
       </form>
+
+      <div className="relative flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200"></div>
+        </div>
+        <span className="relative bg-white px-4 text-xs font-bold text-gray-400 uppercase tracking-widest">
+          O para pruebas
+        </span>
+      </div>
+
+      <div className="bg-violet-50 rounded-2xl p-5 border border-violet-200 space-y-3">
+        <div className="flex items-start gap-2.5">
+          <ShieldAlert className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <h4 className="text-sm font-bold text-violet-800">Simulador de Pago de Pruebas</h4>
+            <p className="text-xs text-violet-700 mt-0.5">
+              Simula una transacción exitosa y actualiza el estado de la venta en la base de datos.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleSimulatePayment}
+          disabled={simulating}
+          className="w-full bg-violet-600 hover:bg-violet-700 text-white p-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {simulating ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" /> Simulando...
+            </>
+          ) : (
+            <>
+              <Play className="w-4 h-4" /> Simular Pago Exitoso
+            </>
+          )}
+        </button>
+      </div>
     </div>
   );
 };
