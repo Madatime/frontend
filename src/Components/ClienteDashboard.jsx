@@ -3,12 +3,9 @@ import {
   ShoppingBag,
   ListOrdered,
   User,
-  Heart,
-  MessageCircle,
   ArrowRight,
   PackageCheck,
-  Clock3,
-  Star
+  Clock3
 } from "lucide-react";
 
 export const ClienteDashboard = ({
@@ -74,7 +71,7 @@ export const ClienteDashboard = ({
         {/* Resumen */}
         <section
           className="grid grid-cols-1 sm:grid-cols-2
-          lg:grid-cols-3 gap-5 mb-9"
+          gap-5 mb-9"
         >
 
           <div
@@ -117,30 +114,6 @@ export const ClienteDashboard = ({
             <div>
               <p className="text-sm text-gray-500">
                 Pedidos pendientes
-              </p>
-
-              <p className="text-2xl font-bold text-gray-900">
-                0
-              </p>
-            </div>
-          </div>
-
-          <div
-            className="bg-white rounded-2xl p-5
-            border border-purple-100 shadow-sm
-            flex items-center gap-4"
-          >
-            <div
-              className="w-12 h-12 rounded-xl
-              bg-purple-100 text-purple-700
-              flex items-center justify-center"
-            >
-              <Star className="w-7 h-7" />
-            </div>
-
-            <div>
-              <p className="text-sm text-gray-500">
-                Productos favoritos
               </p>
 
               <p className="text-2xl font-bold text-gray-900">
@@ -272,74 +245,6 @@ export const ClienteDashboard = ({
                 className="w-5 h-5
                 group-hover:translate-x-1 transition-transform"
               />
-            </div>
-          </button>
-
-          {/* Favoritos */}
-          <button
-            type="button"
-            className="group text-left bg-white rounded-3xl p-7
-            border border-violet-100 shadow-md
-            hover:shadow-xl hover:-translate-y-1
-            transition-all duration-300"
-          >
-            <div
-              className="w-14 h-14 rounded-2xl
-              bg-violet-100 text-violet-700
-              flex items-center justify-center mb-5
-              group-hover:bg-violet-600
-              group-hover:text-white transition-colors"
-            >
-              <Heart className="w-8 h-8" />
-            </div>
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">
-              Favoritos
-            </h2>
-
-            <p className="text-gray-600 leading-relaxed mb-5">
-              Guarda los productos que deseas consultar o comprar después.
-            </p>
-
-            <div
-              className="flex items-center gap-2
-              text-violet-700 font-bold"
-            >
-              Próximamente
-            </div>
-          </button>
-
-          {/* Soporte */}
-          <button
-            type="button"
-            className="group text-left bg-white rounded-3xl p-7
-            border border-violet-100 shadow-md
-            hover:shadow-xl hover:-translate-y-1
-            transition-all duration-300"
-          >
-            <div
-              className="w-14 h-14 rounded-2xl
-              bg-violet-100 text-violet-700
-              flex items-center justify-center mb-5
-              group-hover:bg-violet-600
-              group-hover:text-white transition-colors"
-            >
-              <MessageCircle className="w-8 h-8" />
-            </div>
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">
-              Soporte
-            </h2>
-
-            <p className="text-gray-600 leading-relaxed mb-5">
-              Solicita ayuda si tienes un problema con tu cuenta o pedido.
-            </p>
-
-            <div
-              className="flex items-center gap-2
-              text-violet-700 font-bold"
-            >
-              Próximamente
             </div>
           </button>
 

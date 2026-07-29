@@ -89,6 +89,17 @@ export const Catalogo = ({ user, AddToCart }) => {
         ));
     };
 
+    const mostrarProducto = (producto) => {
+        setSearchQuery(producto.nombre);
+        setSelecionCategoria(producto.categoria?.nombre || 'Todos');
+
+        window.setTimeout(() => {
+            document
+                .getElementById(`producto-${producto.id}`)
+                ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 0);
+    };
+
     //AGREGAR AL CARRITO
     const animateProductToCart = (event) => {
         const cartTarget = document.querySelector('[aria-label^="Abrir carrito"]');
@@ -285,9 +296,12 @@ export const Catalogo = ({ user, AddToCart }) => {
                         className="product-showcase-enter grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4"
                     >
                         {grupoPasarela.productos.map((producto) => (
-                            <article
+                            <button
+                                type="button"
                                 key={producto.id}
-                                className="group/showcase min-w-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50"
+                                onClick={() => mostrarProducto(producto)}
+                                className="group/showcase min-w-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50 cursor-pointer hover:border-violet-300 hover:shadow-md transition-all"
+                                aria-label={`Ver ${producto.nombre} en el catálogo`}
                             >
                                 <div className="relative h-32 sm:h-36 lg:h-40 overflow-hidden bg-slate-100">
                                     <img
@@ -308,7 +322,7 @@ export const Catalogo = ({ user, AddToCart }) => {
                                         ${producto.precio.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
                                     </p>
                                 </div>
-                            </article>
+                            </button>
                         ))}
                     </div>
 
@@ -421,6 +435,7 @@ export const Catalogo = ({ user, AddToCart }) => {
                                 return (
                                     <div
                                         key={producto.id}
+                                        id={`producto-${producto.id}`}
                                         className="bg-white rounded-[1.4rem] border border-slate-200/90 shadow-[0_12px_35px_-24px_rgba(15,23,42,0.58)] overflow-hidden flex flex-col group hover:shadow-[0_24px_48px_-25px_rgba(15,23,42,0.5)] transition-all duration-300 hover:-translate-y-1.5"
                                     >
                                         {/* Imagen con zoom effect */}
