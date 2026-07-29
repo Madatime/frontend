@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import Footer from "./components/Footer";
-import { Catalogo } from "./components/Catalogo";
-import { Navbar } from "./components/Navbar";
-import { Registro } from "./components/Registro";
+import Footer from "./Components/Footer";
+import { Catalogo } from "./Components/Catalogo";
+import { Navbar } from "./Components/navbar";
+import { Registro } from "./Components/Registro";
 import { apiService } from "./services/apiService";
-import { Login } from "./components/Login";
-import { AdminDashboard } from "./components/AdminDashboard";
-import { ClienteDashboard } from "./components/ClienteDashboard";
-import { Perfil } from "./components/Perfil";
-import { Cart } from "./components/Cart";
-import { AdminPanel } from "./components/AdminPanel";
-import { CheckoutForm } from "./components/CheckoutForm";
-import { MisCompras } from "./components/MisCompras";
+import { Login } from "./Components/Login";
+import { AdminDashboard } from "./Components/AdminDashboard";
+import { ClienteDashboard } from "./Components/ClienteDashboard";
+import { Perfil } from "./Components/Perfil";
+import { Cart } from "./Components/Cart";
+import { AdminPanel } from "./Components/AdminPanel";
+import { CheckoutForm } from "./Components/CheckoutForm";
+import { MisCompras } from "./Components/MisCompras";
 
 function App() {
   const [vistaActual, setVistaActual] = useState("catalogo");
