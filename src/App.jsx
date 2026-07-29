@@ -11,6 +11,7 @@ import { Perfil } from "./components/Perfil";
 import { Cart } from "./components/Cart";
 import { AdminPanel } from "./components/AdminPanel";
 import { CheckoutForm } from "./components/CheckoutForm";
+import { MisCompras } from "./components/MisCompras";
 
 function App() {
   const [vistaActual, setVistaActual] = useState("catalogo");
@@ -183,6 +184,14 @@ function App() {
         <ClienteDashboard
         user={user}
         setVistaActual={setVistaActual}
+        />
+      );
+
+    case "miscompras":
+      return (
+        <MisCompras
+          setVistaActual={setVistaActual}
+          setVentaActiva={setVentaActiva}
         />
       );
 

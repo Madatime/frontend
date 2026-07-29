@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { apiService } from '../services/apiService';
-import { CreditCard, CheckCircle2, ShieldAlert, Loader2, Play } from 'lucide-react';
+import { CreditCard, CheckCircle2, ShieldAlert, Loader2 } from 'lucide-react';
 
 const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null;
@@ -14,7 +14,6 @@ const PaymentForm = ({ venta, onPaymentSuccess }) => {
   const [clientSecret, setClientSecret] = useState('');
   const [procesando, setProcesando] = useState(false);
   const [error, setError] = useState('');
-  const [simulating, setSimulating] = useState(false);
 
   useEffect(() => {
     // 1. Obtener el clientSecret del backend
@@ -25,8 +24,7 @@ const PaymentForm = ({ venta, onPaymentSuccess }) => {
           setClientSecret(res.clientSecret);
         }
       } catch (err) {
-        // Ignoramos el error en interfaz porque proveemos el simulador de respaldo
-        console.warn('No se pudo inicializar Stripe. Se usará el simulador de pago.', err);
+        console.warn('No se pudo inicializar Stripe.', err);
       }
     };
     if (venta && venta.id) {
@@ -37,7 +35,7 @@ const PaymentForm = ({ venta, onPaymentSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements || !clientSecret) {
-      setError('Stripe no está inicializado o la clave es incorrecta. Usa el Simulador de Pago abajo.');
+      setError('Stripe no está inicializado o la clave pública es incorrecta.');
       return;
     }
 
@@ -66,22 +64,8 @@ const PaymentForm = ({ venta, onPaymentSuccess }) => {
     }
   };
 
-  // Simulador de pago para pruebas rápidas o si no hay conexión/claves reales
-  const handleSimulatePayment = async () => {
-    setSimulating(true);
-    setError('');
-    try {
-      await apiService.confirmarPagoVenta(venta.id);
-      onPaymentSuccess();
-    } catch {
-      setError('Error al conectar con la API local para simular el pago.');
-    } finally {
-      setSimulating(false);
-    }
-  };
-
   return (
-    <div className="space-y-6">
+    <div>
       {error && (
         <div className="bg-red-50 text-red-700 p-4 rounded-xl flex items-start gap-2.5 border border-red-200 text-sm">
           <ShieldAlert className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
@@ -120,42 +104,6 @@ const PaymentForm = ({ venta, onPaymentSuccess }) => {
           )}
         </button>
       </form>
-
-      {/* Separador */}
-      <div className="relative flex items-center justify-center">
-        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-        <span className="relative bg-white px-4 text-xs font-bold text-gray-400 uppercase tracking-widest">O de Respaldo</span>
-      </div>
-
-      {/* Simulador */}
-      <div className="bg-violet-50 rounded-2xl p-5 border border-violet-200 space-y-3">
-        <div className="flex items-start gap-2.5">
-          <ShieldAlert className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <h4 className="text-sm font-bold text-violet-800">Simulador de Pago de Pruebas</h4>
-            <p className="text-xs text-violet-700 mt-0.5">
-              Si estás usando las claves de Stripe por defecto o si no tienes internet, puedes simular una transacción exitosa para actualizar la base de datos.
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleSimulatePayment}
-          disabled={simulating}
-          className="w-full bg-violet-600 hover:bg-violet-700 text-white p-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer text-sm"
-        >
-          {simulating ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" /> Simulando...
-            </>
-          ) : (
-            <>
-              <Play className="w-4 h-4" /> Simular Pago Exitoso (Recomendado para Pruebas)
-            </>
-          )}
-        </button>
-      </div>
     </div>
   );
 };
@@ -197,7 +145,7 @@ export const CheckoutForm = ({ ventaActiva, setVistaActual }) => {
         </div>
         <div className="flex gap-3">
           <button
-            onClick={() => setVistaActual('cliente-dashboard')}
+            onClick={() => setVistaActual('miscompras')}
             className="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-3 rounded-xl text-sm font-bold shadow-sm transition-colors cursor-pointer"
           >
             Ver Mis Compras

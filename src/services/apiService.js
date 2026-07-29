@@ -313,6 +313,14 @@ export const apiService = {
         return await handleResponse(response);
     },
 
+    getMisCompras: async () => {
+        const response = await fetch(
+            API_URL + "venta/mis-compras",
+            { headers: getHeaders() }
+        );
+        return await handleResponse(response);
+    },
+
     getVentas: async () => {
         const response = await fetch(
             API_URL + "venta/",

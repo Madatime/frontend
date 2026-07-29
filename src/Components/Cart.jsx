@@ -72,7 +72,7 @@ export const Cart = ({
             setVentaActiva(ventaRegistrada);
             clearCart();
             onClose();
-            setVistaActual('cliente-dashboard');
+            setVistaActual('checkout');
             alert(`Compra registrada correctamente. Folio: ${ventaRegistrada.id}.`);
         
         }catch(err){
