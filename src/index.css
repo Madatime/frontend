@@ -115,9 +115,25 @@ body {
   }
 }
 
+@keyframes product-showcase-enter {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.product-showcase-enter {
+  animation: product-showcase-enter 360ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .app-shell main > *,
-  .app-shell button {
+  .app-shell button,
+  .product-showcase-enter {
     animation: none;
     transition: none;
   }

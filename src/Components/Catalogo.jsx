@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../services/apiService';
 import {
+    applyCatalogImageOverride,
+    catalogImageCredits
+} from '../data/catalogImageOverrides';
+import {
     AlertTriangle,
     Check,
+    ChevronLeft,
+    ChevronRight,
     Filter,
     Info,
+    Pause,
+    Play,
     Search,
     ShieldCheck,
     ShoppingCart,
@@ -12,11 +20,18 @@ import {
     Truck
 } from 'lucide-react';
 
+const DEFAULT_PRODUCT_IMAGE = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=300";
+
 export const Catalogo = ({ user, AddToCart }) => {
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [carga, setCarga] = useState(true);
     const [error, setError] = useState('');
+    const [indicePasarela, setIndicePasarela] = useState(0);
+    const [pasarelaPausada, setPasarelaPausada] = useState(
+        () => typeof window !== 'undefined'
+            && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
 
     //filtros 
     const [searchQuery, setSearchQuery] = useState('');
@@ -27,7 +42,7 @@ export const Catalogo = ({ user, AddToCart }) => {
             setCarga(true);
             try {
                 const datosProductos = await apiService.getProductos();
-                setProductos(datosProductos);
+                setProductos(datosProductos.map(applyCatalogImageOverride));
                 const datosCategorias = await apiService.getCategorias();
                 setCategorias(datosCategorias);
             } catch (err) {
@@ -38,6 +53,41 @@ export const Catalogo = ({ user, AddToCart }) => {
         }; 
         cargaDatosCatalogo();
     }, []);
+
+    const categoriasPasarela = categorias
+        .map((categoria) => ({
+            categoria,
+            productos: productos
+                .filter((producto) => producto.categoria?.nombre === categoria.nombre)
+                .slice(0, 5)
+        }))
+        .filter((grupo) => grupo.productos.length > 0);
+
+    const totalCategoriasPasarela = categoriasPasarela.length;
+    const grupoPasarela = totalCategoriasPasarela > 0
+        ? categoriasPasarela[indicePasarela % totalCategoriasPasarela]
+        : null;
+
+    useEffect(() => {
+        if (pasarelaPausada || totalCategoriasPasarela < 2) {
+            return undefined;
+        }
+
+        const timer = window.setInterval(() => {
+            setIndicePasarela((indiceActual) => (
+                (indiceActual + 1) % totalCategoriasPasarela
+            ));
+        }, 5500);
+
+        return () => window.clearInterval(timer);
+    }, [pasarelaPausada, totalCategoriasPasarela]);
+
+    const cambiarCategoriaPasarela = (direccion) => {
+        setIndicePasarela((indiceActual) => (
+            (indiceActual + direccion + totalCategoriasPasarela)
+            % totalCategoriasPasarela
+        ));
+    };
 
     //AGREGAR AL CARRITO
     const animateProductToCart = (event) => {
@@ -181,6 +231,110 @@ export const Catalogo = ({ user, AddToCart }) => {
                 </div>
             )}
 
+            {/* Pasarela visual de productos existentes */}
+            {grupoPasarela && (
+                <section
+                    className="mb-6 lg:mb-8 rounded-[1.75rem] border border-violet-100 bg-white p-4 sm:p-5 lg:p-6 shadow-[0_20px_50px_-34px_rgba(76,29,149,0.45)] overflow-hidden"
+                    aria-label="Pasarela de productos por categoría"
+                >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 text-left">
+                        <div>
+                            <span className="text-xs font-bold uppercase tracking-[0.16em] text-violet-600">
+                                Descubre por categoría
+                            </span>
+                            <h2 className="mt-1 mb-0 text-2xl font-extrabold tracking-tight text-slate-900">
+                                {grupoPasarela.categoria.nombre}
+                            </h2>
+                            <p className="mt-1 text-sm text-slate-500">
+                                Una selección de hasta 5 productos disponibles
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-2" aria-label="Controles de la pasarela">
+                            <button
+                                type="button"
+                                onClick={() => cambiarCategoriaPasarela(-1)}
+                                className="w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:text-violet-700 hover:bg-violet-50 flex items-center justify-center cursor-pointer"
+                                aria-label="Ver categoría anterior"
+                            >
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setPasarelaPausada((pausada) => !pausada)}
+                                className="w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:text-violet-700 hover:bg-violet-50 flex items-center justify-center cursor-pointer"
+                                aria-label={pasarelaPausada ? 'Reanudar pasarela' : 'Pausar pasarela'}
+                            >
+                                {pasarelaPausada
+                                    ? <Play className="w-4 h-4" />
+                                    : <Pause className="w-4 h-4" />}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => cambiarCategoriaPasarela(1)}
+                                className="w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:text-violet-700 hover:bg-violet-50 flex items-center justify-center cursor-pointer"
+                                aria-label="Ver categoría siguiente"
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        key={grupoPasarela.categoria.id}
+                        className="product-showcase-enter grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4"
+                    >
+                        {grupoPasarela.productos.map((producto) => (
+                            <article
+                                key={producto.id}
+                                className="group/showcase min-w-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50"
+                            >
+                                <div className="relative h-32 sm:h-36 lg:h-40 overflow-hidden bg-slate-100">
+                                    <img
+                                        src={producto.imagenUrl || DEFAULT_PRODUCT_IMAGE}
+                                        alt={producto.nombre}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover/showcase:scale-105"
+                                        onError={(event) => {
+                                            event.currentTarget.src = DEFAULT_PRODUCT_IMAGE;
+                                        }}
+                                    />
+                                    <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-950/25 to-transparent pointer-events-none"></div>
+                                </div>
+                                <div className="p-3.5 text-left">
+                                    <h3 className="m-0 text-sm font-extrabold leading-snug text-slate-800 line-clamp-2 min-h-10">
+                                        {producto.nombre}
+                                    </h3>
+                                    <p className="mt-2 text-sm font-bold text-violet-700">
+                                        ${producto.precio.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
+                                    </p>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-center gap-1.5">
+                        {categoriasPasarela.map((grupo, indice) => (
+                            <button
+                                key={grupo.categoria.id}
+                                type="button"
+                                onClick={() => setIndicePasarela(indice)}
+                                className={`h-2 rounded-full cursor-pointer transition-all ${
+                                    indice === indicePasarela % totalCategoriasPasarela
+                                        ? 'w-7 bg-violet-600'
+                                        : 'w-2 bg-violet-200 hover:bg-violet-300'
+                                }`}
+                                aria-label={`Ver ${grupo.categoria.nombre}`}
+                                aria-current={
+                                    indice === indicePasarela % totalCategoriasPasarela
+                                        ? 'true'
+                                        : undefined
+                                }
+                            />
+                        ))}
+                    </div>
+                </section>
+            )}
+
             {/* Buscador y Contenido */}
             <div className="flex flex-col lg:flex-row gap-6 xl:gap-8 items-start">
                 {/* Filtros Lateral (Sidebar) */}
@@ -261,7 +415,6 @@ export const Catalogo = ({ user, AddToCart }) => {
                     ) : (
                         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-5 xl:gap-6">
                             {filtroProductos.map((producto) => {
-                                const defaultImage = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=300";
                                 const isOutOfStock = producto.stock <= 0;
                                 const isAdmin = user?.rol === 'ROLE_ADMIN';
 
@@ -273,11 +426,11 @@ export const Catalogo = ({ user, AddToCart }) => {
                                         {/* Imagen con zoom effect */}
                                         <div className="h-52 2xl:h-56 w-full bg-gray-100 relative overflow-hidden">
                                             <img
-                                                src={producto.imagenUrl || defaultImage}
+                                                src={producto.imagenUrl || DEFAULT_PRODUCT_IMAGE}
                                                 alt={producto.nombre}
                                                 className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
                                                 onError={(e) => {
-                                                    e.target.src = defaultImage;
+                                                    e.currentTarget.src = DEFAULT_PRODUCT_IMAGE;
                                                 }}
                                             />
                                             <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-900/15 to-transparent pointer-events-none"></div>
@@ -340,6 +493,36 @@ export const Catalogo = ({ user, AddToCart }) => {
                     )}
                 </section>
             </div>
+
+            <details className="mt-8 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-xs text-slate-500">
+                <summary className="cursor-pointer font-semibold text-slate-600">
+                    Créditos de las imágenes actualizadas
+                </summary>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                    {catalogImageCredits.map((credito) => (
+                        <p key={credito.producto} className="leading-relaxed">
+                            <span className="font-semibold text-slate-700">{credito.producto}:</span>{' '}
+                            <a
+                                href={credito.fuente}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-violet-700 hover:underline"
+                            >
+                                {credito.autor}
+                            </a>{' '}
+                            ·{' '}
+                            <a
+                                href={credito.licenciaUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-violet-700 hover:underline"
+                            >
+                                {credito.licencia}
+                            </a>
+                        </p>
+                    ))}
+                </div>
+            </details>
 
         </div>
     );
