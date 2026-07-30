@@ -2,7 +2,15 @@ import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { apiService } from '../services/apiService';
-import { CreditCard, CheckCircle2, ShieldAlert, Loader2, Play } from 'lucide-react';
+import {
+  CreditCard,
+  CheckCircle2,
+  ShieldAlert,
+  Loader2,
+  Play,
+  Package,
+  ShoppingBag,
+} from 'lucide-react';
 
 const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 const stripePromise = stripePublicKey ? loadStripe(stripePublicKey) : null;
@@ -215,39 +223,137 @@ export const CheckoutForm = ({ ventaActiva, setVistaActual }) => {
   }
 
   return (
-    <div className="max-w-md mx-auto my-12 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-      <div className="bg-gradient-to-r from-violet-700 to-purple-800 px-6 py-6 text-white text-center">
-        <h2 className="text-xl font-bold">Checkout de Venta</h2>
-        <p className="text-violet-200 mt-1 text-xs">Completa tu pago seguro para la orden #{ventaActiva.id}</p>
-      </div>
-
-      <div className="p-6 space-y-6">
-        {/* Resumen Venta */}
-        <div className="space-y-3">
-          <h3 className="font-bold text-gray-800 text-sm uppercase tracking-wider">Resumen del Pedido</h3>
-          <div className="bg-violet-50/50 p-4 rounded-xl border border-violet-100 text-sm space-y-2">
-            {(ventaActiva.detalles || []).map((det, idx) => (
-              <div key={idx} className="flex justify-between text-gray-700 text-xs">
-                <span>
-                  {det.producto?.nombre || `Producto #${det.producto?.id}`} (x{det.cantidad})
-                </span>
-                <span className="font-bold text-gray-800">${(det.precioUnitario * det.cantidad).toFixed(2)}</span>
-              </div>
-            ))}
-            <div className="border-t border-violet-200 pt-2 flex justify-between font-extrabold text-violet-950 text-sm">
-              <span>Total a Cobrar</span>
-              <span>${ventaActiva.total.toFixed(2)} MXN</span>
+    <div className="max-w-6xl mx-auto my-10 bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+      <div className="bg-gradient-to-r from-violet-700 to-purple-800 px-7 py-7 text-white">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p className="text-violet-200 text-xs font-bold uppercase tracking-[0.2em]">
+              Pago seguro
+            </p>
+            <h2 className="text-2xl font-extrabold mt-1">Checkout de Venta</h2>
+            <p className="text-violet-200 mt-1 text-sm">
+              Completa tu pago para la orden #{ventaActiva.id}
+            </p>
+          </div>
+          <div className="flex items-center gap-3 rounded-2xl bg-white/10 border border-white/15 px-4 py-3">
+            <ShoppingBag className="w-6 h-6" />
+            <div>
+              <p className="text-xs text-violet-100">Total del pedido</p>
+              <p className="text-lg font-extrabold">
+                ${Number(ventaActiva.total || 0).toFixed(2)} MXN
+              </p>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Formulario Stripe Provider */}
-        <Elements stripe={stripePromise}>
-          <PaymentForm 
-            venta={ventaActiva} 
-            onPaymentSuccess={handlePaymentSuccess}
-          />
-        </Elements>
+      <div className="p-6 md:p-8 grid lg:grid-cols-[1.1fr_0.9fr] gap-8 bg-slate-50/70">
+        <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm">
+          <div className="flex items-center justify-between gap-4 mb-5">
+            <div>
+              <p className="text-xs font-bold text-violet-600 uppercase tracking-widest">
+                Tu compra
+              </p>
+              <h3 className="font-extrabold text-slate-900 text-xl mt-1">
+                Productos del pedido
+              </h3>
+            </div>
+            <span className="bg-violet-50 text-violet-700 rounded-full px-3 py-1 text-xs font-bold">
+              {(ventaActiva.detalles || []).reduce(
+                (cantidad, detalle) => cantidad + Number(detalle.cantidad || 0),
+                0
+              )}{" "}
+              artículos
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {(ventaActiva.detalles || []).map((det, idx) => {
+              const producto = det.producto || {};
+              const precioUnitario = Number(
+                det.precioUnitario ?? producto.precio ?? 0
+              );
+              const subtotal = Number(
+                det.subtotal ?? precioUnitario * Number(det.cantidad || 0)
+              );
+
+              return (
+                <article
+                  key={producto.id || idx}
+                  className="flex gap-4 rounded-2xl border border-slate-200 p-3.5"
+                >
+                  {producto.imagenUrl ? (
+                    <img
+                      src={producto.imagenUrl}
+                      alt={producto.nombre || "Producto"}
+                      className="w-24 h-24 rounded-xl object-cover bg-slate-100 flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-xl bg-violet-50 text-violet-500 flex items-center justify-center flex-shrink-0">
+                      <Package className="w-9 h-9" />
+                    </div>
+                  )}
+
+                  <div className="min-w-0 flex-1 py-1">
+                    <p className="font-extrabold text-slate-900 truncate">
+                      {producto.nombre || `Producto #${producto.id || idx + 1}`}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                      {producto.descripcion || "Producto incluido en tu pedido."}
+                    </p>
+                    <div className="flex items-end justify-between gap-3 mt-3">
+                      <div className="text-xs text-slate-500">
+                        Cantidad:{" "}
+                        <span className="font-bold text-slate-700">
+                          {det.cantidad}
+                        </span>
+                        <span className="block mt-0.5">
+                          ${precioUnitario.toFixed(2)} c/u
+                        </span>
+                      </div>
+                      <span className="font-extrabold text-violet-700">
+                        ${subtotal.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+
+            {(ventaActiva.detalles || []).length === 0 && (
+              <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
+                <Package className="w-9 h-9 mx-auto mb-2 text-slate-400" />
+                La orden fue registrada sin información visual de los productos.
+              </div>
+            )}
+
+            <div className="border-t border-slate-200 pt-4 flex justify-between font-extrabold text-slate-950">
+              <span>Total a cobrar</span>
+              <span>${Number(ventaActiva.total || 0).toFixed(2)} MXN</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6 shadow-sm self-start">
+          <div className="mb-5">
+            <p className="text-xs font-bold text-violet-600 uppercase tracking-widest">
+              Método de pago
+            </p>
+            <h3 className="font-extrabold text-slate-900 text-xl mt-1">
+              Finaliza tu compra
+            </h3>
+            <p className="text-sm text-slate-500 mt-1">
+              La ventana de Stripe y el simulador conservan su funcionamiento actual.
+            </p>
+          </div>
+
+          <Elements stripe={stripePromise}>
+            <PaymentForm
+              venta={ventaActiva}
+              onPaymentSuccess={handlePaymentSuccess}
+            />
+          </Elements>
+        </section>
       </div>
     </div>
   );

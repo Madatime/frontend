@@ -69,7 +69,16 @@ export const Cart = ({
         //FUNCION DE REGISTRO DE VENTA
         try{
             const ventaRegistrada = await apiService.procesarVenta(ventaPayload);
-            setVentaActiva(ventaRegistrada);
+            const detallesConProducto = cart.map((item) => ({
+                producto: item.producto,
+                cantidad: item.cantidad,
+                precioUnitario: item.producto.precio,
+                subtotal: item.producto.precio * item.cantidad,
+            }));
+            setVentaActiva({
+                ...ventaRegistrada,
+                detalles: detallesConProducto,
+            });
             clearCart();
             onClose();
             setVistaActual('checkout');

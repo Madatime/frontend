@@ -227,6 +227,38 @@ export const apiService = {
         return await handleResponse(response);
     },
 
+    getPerfilAdministrador: async () => {
+        const response = await fetch(
+            API_URL + "usuario/perfil",
+            { headers: getHeaders() }
+        );
+        return await handleResponse(response);
+    },
+
+    actualizarPerfilAdministrador: async (usuario) => {
+        const response = await fetch(
+            API_URL + "usuario/perfil",
+            {
+                method: "PUT",
+                body: JSON.stringify(usuario),
+                headers: getHeaders()
+            }
+        );
+        return await handleResponse(response);
+    },
+
+    registrarUsuarioAdmin: async (usuario) => {
+        const response = await fetch(
+            API_URL + "usuario/registro",
+            {
+                method: "POST",
+                body: JSON.stringify(usuario),
+                headers: getHeaders()
+            }
+        );
+        return await handleResponse(response);
+    },
+
     crearCliente: async (cliente) => {
         const response = await fetch(
             API_URL + "cliente/",

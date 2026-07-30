@@ -6,7 +6,8 @@ import {
   Users,
   Truck,
   ArrowRight,
-  ListChecks
+  ListChecks,
+  UserCog
 } from "lucide-react";
 
 export const AdminDashboard = ({
@@ -268,6 +269,40 @@ export const AdminDashboard = ({
 
             <div className="flex items-center gap-2 text-violet-700 font-bold">
               Administrar detalles
+              <ArrowRight
+                className="w-5 h-5 group-hover:translate-x-1
+                transition-transform"
+              />
+            </div>
+          </button>
+
+          {/* Perfil del administrador */}
+          <button
+            type="button"
+            onClick={() => setVistaActual("perfil")}
+            className="group text-left bg-white rounded-3xl p-7
+            border border-fuchsia-100 shadow-md hover:shadow-xl
+            hover:-translate-y-1 transition-all duration-300"
+          >
+            <div
+              className="w-14 h-14 rounded-2xl bg-fuchsia-100
+              text-fuchsia-700 flex items-center justify-center mb-5
+              group-hover:bg-fuchsia-600 group-hover:text-white
+              transition-colors"
+            >
+              <UserCog className="w-8 h-8" />
+            </div>
+
+            <h2 className="text-2xl font-bold text-slate-900 mb-3">
+              Mi perfil
+            </h2>
+
+            <p className="text-slate-600 leading-relaxed mb-5">
+              Consulta y actualiza tu información personal de administrador.
+            </p>
+
+            <div className="flex items-center gap-2 text-fuchsia-700 font-bold">
+              Ver mi información
               <ArrowRight
                 className="w-5 h-5 group-hover:translate-x-1
                 transition-transform"

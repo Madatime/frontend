@@ -16,6 +16,7 @@ const formularioInicial = {
   email: "",
   direccion: "",
   telefono: "",
+  rol: "ROLE_CLIENTE",
 };
 
 export const ClientesAdmin = () => {
@@ -73,6 +74,7 @@ export const ClientesAdmin = () => {
       email: cliente.email || "",
       direccion: cliente.direccion || "",
       telefono: cliente.telefono || "",
+      rol: "ROLE_CLIENTE",
     });
     setMostrarFormulario(true);
     setError("");
@@ -106,16 +108,20 @@ export const ClientesAdmin = () => {
         });
         setExito("Cliente actualizado correctamente.");
       } else {
-        await apiService.registro({
+        await apiService.registrarUsuarioAdmin({
           username: formulario.username.trim(),
           password: formulario.password,
           email: formulario.email.trim(),
           nombre: formulario.nombre.trim(),
           direccion: formulario.direccion.trim(),
           telefono: formulario.telefono.trim(),
-          rol: "ROLE_CLIENTE",
+          rol: formulario.rol,
         });
-        setExito("Cliente creado correctamente.");
+        setExito(
+          formulario.rol === "ROLE_ADMIN"
+            ? "Administrador creado correctamente."
+            : "Cliente creado correctamente."
+        );
       }
       cerrarFormulario();
       await cargarClientes();
@@ -149,9 +155,9 @@ export const ClientesAdmin = () => {
       <CrudHeader
         icon={Users}
         title="Clientes"
-        description="Consulta las cuentas de cliente y actualiza sus datos de contacto."
+        description="Consulta clientes y registra nuevas cuentas de cliente o administrador."
         onCreate={abrirNuevo}
-        createLabel="Nuevo cliente"
+        createLabel="Nuevo usuario"
         search={busqueda}
         onSearch={setBusqueda}
       />
@@ -163,7 +169,7 @@ export const ClientesAdmin = () => {
           className="bg-white rounded-3xl border border-violet-200 shadow-md p-6 mb-6 text-left"
         >
           <h3 className="text-xl font-extrabold text-slate-900 mb-5">
-            {editando ? "Editar cliente" : "Registrar cliente"}
+            {editando ? "Editar cliente" : "Registrar usuario"}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {!editando && (
@@ -189,6 +195,20 @@ export const ClientesAdmin = () => {
                     minLength={6}
                     className="w-full p-3 rounded-xl border border-slate-300"
                   />
+                </label>
+                <label className="space-y-1.5 md:col-span-2">
+                  <span className="text-sm font-bold text-slate-700">
+                    Tipo de cuenta
+                  </span>
+                  <select
+                    name="rol"
+                    value={formulario.rol}
+                    onChange={handleChange}
+                    className="w-full p-3 rounded-xl border border-slate-300 bg-white"
+                  >
+                    <option value="ROLE_CLIENTE">Cliente</option>
+                    <option value="ROLE_ADMIN">Administrador</option>
+                  </select>
                 </label>
               </>
             )}

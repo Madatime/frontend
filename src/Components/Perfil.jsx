@@ -6,6 +6,7 @@ const formularioInicial = {
   email: "",
   telefono: "",
   direccion: "",
+  password: "",
 };
 
 export const Perfil = ({
@@ -21,34 +22,33 @@ export const Perfil = ({
     ...formularioInicial,
     nombre: user?.nombre || "",
   });
-  const [cargando, setCargando] = useState(esCliente);
+  const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
   const [exito, setExito] = useState("");
 
   useEffect(() => {
-    if (!esCliente) {
-      return;
-    }
-
     let activo = true;
 
     const cargarPerfil = async () => {
       setCargando(true);
       setError("");
       try {
-        const cliente = await apiService.getPerfilCliente();
+        const perfil = esCliente
+          ? await apiService.getPerfilCliente()
+          : await apiService.getPerfilAdministrador();
         if (activo) {
           setFormulario({
-            nombre: cliente.nombre || "",
-            email: cliente.email || "",
-            telefono: cliente.telefono || "",
-            direccion: cliente.direccion || "",
+            nombre: perfil.nombre || "",
+            email: perfil.email || "",
+            telefono: perfil.telefono || "",
+            direccion: perfil.direccion || "",
+            password: "",
           });
         }
       } catch (err) {
         if (activo) {
-          setError(err.message || "No se pudo cargar la información del cliente.");
+          setError(err.message || "No se pudo cargar la información del perfil.");
         }
       } finally {
         if (activo) {
@@ -91,30 +91,34 @@ export const Perfil = ({
 
   const guardarCambios = async (event) => {
     event.preventDefault();
-    if (!esCliente) {
-      return;
-    }
 
     setGuardando(true);
     setError("");
     setExito("");
 
     try {
-      const clienteActualizado = await apiService.actualizarPerfilCliente({
+      const datosPerfil = {
         nombre: formulario.nombre.trim(),
         email: formulario.email.trim(),
         telefono: formulario.telefono.trim(),
         direccion: formulario.direccion.trim(),
-      });
+      };
+      const perfilActualizado = esCliente
+        ? await apiService.actualizarPerfilCliente(datosPerfil)
+        : await apiService.actualizarPerfilAdministrador({
+            ...datosPerfil,
+            password: formulario.password,
+          });
 
       setFormulario({
-        nombre: clienteActualizado.nombre || "",
-        email: clienteActualizado.email || "",
-        telefono: clienteActualizado.telefono || "",
-        direccion: clienteActualizado.direccion || "",
+        nombre: perfilActualizado.nombre || "",
+        email: perfilActualizado.email || "",
+        telefono: perfilActualizado.telefono || "",
+        direccion: perfilActualizado.direccion || "",
+        password: "",
       });
-      localStorage.setItem("nombre", clienteActualizado.nombre || username);
-      onUserUpdate?.({ nombre: clienteActualizado.nombre || username });
+      localStorage.setItem("nombre", perfilActualizado.nombre || username);
+      onUserUpdate?.({ nombre: perfilActualizado.nombre || username });
       setExito("Información actualizada correctamente.");
     } catch (err) {
       setError(err.message || "No se pudieron guardar los cambios.");
@@ -178,7 +182,6 @@ export const Perfil = ({
                 className="w-full border rounded-xl p-3 bg-gray-50"
                 value={formulario.nombre}
                 onChange={handleChange}
-                readOnly={!esCliente}
                 disabled={cargando || guardando}
                 required
               />
@@ -208,7 +211,6 @@ export const Perfil = ({
                 className="w-full border rounded-xl p-3 bg-gray-50"
                 value={formulario.email}
                 onChange={handleChange}
-                readOnly={!esCliente}
                 disabled={cargando || guardando}
                 required
               />
@@ -225,7 +227,6 @@ export const Perfil = ({
                 className="w-full border rounded-xl p-3 bg-gray-50"
                 value={formulario.telefono}
                 onChange={handleChange}
-                readOnly={!esCliente}
                 disabled={cargando || guardando}
               />
             </div>
@@ -241,10 +242,28 @@ export const Perfil = ({
                 className="w-full border rounded-xl p-3 bg-gray-50"
                 value={formulario.direccion}
                 onChange={handleChange}
-                readOnly={!esCliente}
                 disabled={cargando || guardando}
               />
             </div>
+
+            {!esCliente && (
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold text-gray-600 mb-2">
+                  Nueva contraseña
+                </label>
+
+                <input
+                  type="password"
+                  name="password"
+                  minLength={6}
+                  className="w-full border rounded-xl p-3 bg-gray-50"
+                  value={formulario.password}
+                  onChange={handleChange}
+                  disabled={cargando || guardando}
+                  placeholder="Déjala vacía para conservar la contraseña actual"
+                />
+              </div>
+            )}
           </div>
 
           {error && (
@@ -259,17 +278,15 @@ export const Perfil = ({
             </p>
           )}
 
-          {esCliente && (
-            <div className="flex justify-end mt-8">
-              <button
-                type="submit"
-                disabled={cargando || guardando}
-                className="bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white px-6 py-3 rounded-xl font-semibold"
-              >
-                {guardando ? "Guardando..." : "Guardar cambios"}
-              </button>
-            </div>
-          )}
+          <div className="flex justify-end mt-8">
+            <button
+              type="submit"
+              disabled={cargando || guardando}
+              className="bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white px-6 py-3 rounded-xl font-semibold"
+            >
+              {guardando ? "Guardando..." : "Guardar cambios"}
+            </button>
+          </div>
         </form>
 
         {/* Panel lateral */}
