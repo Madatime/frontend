@@ -8,6 +8,7 @@ export const Registro = ({ onRegisterSuccess, onGoToLogin }) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [rol, setRol] = useState('ROLE_CLIENTE');
     const [direccion, setDireccion] = useState('');
     const [telefono, setTelefono] = useState('');
     const [error, setError] = useState('');
@@ -26,9 +27,9 @@ export const Registro = ({ onRegisterSuccess, onGoToLogin }) => {
             email,
             password,
             nombre,
-            rol: 'ROLE_CLIENTE',
-            direccion,
-            telefono,
+            rol: rol,
+            direccion: rol === 'ROLE_CLIENTE' ? direccion : null,
+            telefono: rol === 'ROLE_CLIENTE' ? telefono : null,
         };
 
         try {
@@ -142,6 +143,24 @@ export const Registro = ({ onRegisterSuccess, onGoToLogin }) => {
                     </div>
                 </div>
 
+                {/* Rol Selector */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Rol de usuario
+                    </label>
+                    <select
+                        value={rol}
+                        onChange={(e) => setRol(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300
+                        rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    >
+                        <option value="ROLE_CLIENTE">Cliente</option>
+                        <option value="ROLE_ADMIN">Administrador</option>
+                    </select>
+                </div>
+
+                {rol === 'ROLE_CLIENTE' && (
+                    <>
                 {/* TELEFONO */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -179,6 +198,8 @@ export const Registro = ({ onRegisterSuccess, onGoToLogin }) => {
                                 />
                             </div>
                         </div>
+                    </>
+                )}
 
                 <button
                     type="submit"
